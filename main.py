@@ -17,24 +17,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
-# ==========================================
-# MENU WYBORU TRYBU W TERMINALU
-# ==========================================
-print("\n" + "="*50)
-print("🤖 WYBIERZ TRYB DZIAŁANIA SYSTEMU EVILCHAT:")
-print("[1] LOCAL (Ollama - LLaMA 3.3 13B)")
-print("[2] GROQ  (API Groq - LLaMA 70B)")
-print("="*50)
-
-wybor = input("Wpisz 1 lub 2 i wciśnij Enter: ")
-
-if wybor == "1":
-    print("\n-> Uruchamiam TRYB 100% LOKALNY (Odpowiedzi będą wolniejsze)")
-    os.environ["EVIL_MODE"] = "LOCAL"
-else:
-    print("\n-> Uruchamiam TRYB CHMUROWY (Błyskawiczne odpowiedzi)")
-    os.environ["EVIL_MODE"] = "GROQ"
-
 app = FastAPI()
 
 app.add_middleware(
@@ -74,12 +56,12 @@ async def startup_event():
 
         print("2. Inicjalizacja wybranego modelu LLM...")
         
-        # LOGIKA PRZEŁĄCZANIA MODELU
+       # LOGIKA PRZEŁĄCZANIA MODELU BAZUJĄCA NA SKRYPCIE .BAT
         if os.environ.get("EVIL_MODE") == "LOCAL":
-           if os.environ.get("EVIL_MODE") == "LOCAL":
-            # Wymuszamy małe okno kontekstowe (2048 tokenów), żeby model na 100% zmieścił się w 4 GB VRAM
-            llm = Ollama(model="jayeshpandit2480/gemma3-UNCENSORED:1b", num_ctx=2048)
+            print("TRYB: OLLAMA")
+            llm = Ollama(model="jayeshpandit2480/gemma3-UNCENSORED:1b", num_ctx=2048) 
         else:
+            print("TRYB: GROQ")
             llm = ChatGroq(
                 temperature=0.7, 
                 model_name="llama-3.3-70b-versatile", 
