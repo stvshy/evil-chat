@@ -19,21 +19,21 @@ type Message = {
 const translations = {
   en: {
     title: "EvilChat",
-    subtitle: "RAG + Ollama Engine",
+    subtitle: "Local RAG + Groq API",
     initialMessage: "What do you want? Ask quickly, I don't have all day for your pathetic drivel. 😈",
     placeholder: "Write something stupid...",
-    loading: "Evil Expert is thinking (and judging you)...",
+    loading: "EvilChat is thinking...",
     errorConnection: "Failed to connect to the backend. Run the server `python main.py` locally.",
-    footer: "EVILCHAT 😈 MIGHT MAKE MISTAKES. YOU'RE STILL WORSE."
+    footer: "EVILCHAT MIGHT MAKE MISTAKES. BUT YOU'RE STILL WORSE."
   },
   pl: {
     title: "EvilChat",
-    subtitle: "Silnik RAG + Ollama",
+    subtitle: "LOCAL RAG + Groq API",
     initialMessage: "Czego chcesz? Pytaj szybko, nie mam całego dnia na twoje żałosne wypociny. 😈",
     placeholder: "Napisz coś głupiego...",
-    loading: "Evil Ekspert myśli (i cię ocenia)...",
+    loading: "EvilChat myśli...",
     errorConnection: "Nie udało się połączyć z backendem. Uruchom serwer `python main.py` lokalnie.",
-    footer: "EVILCHAT 😈 MOŻE POPEŁNIAĆ BŁĘDY. I TAK JESTEŚ GORSZY."
+    footer: "EVILCHAT MOŻE POPEŁNIAĆ BŁĘDY. ALE I TAK JESTEŚ GORSZY."
   }
 };
 
@@ -169,11 +169,11 @@ export default function App() {
           title={lang === 'en' ? "Switch to Polish" : "Switch to English"}
         >
           <ReactCountryFlag
-            countryCode={lang === 'en' ? 'GB' : 'PL'}
+            countryCode={lang === 'en' ? 'PL' : 'GB'}
             svg
             style={{ width: '1.2em', height: '1.2em' }}
           />
-          <span className="text-xs font-medium text-zinc-300 uppercase">{lang}</span>
+          <span className="text-xs font-medium text-zinc-300 uppercase">{lang === 'en' ? 'pl' : 'en'}</span>
         </button>
       </header>
 
