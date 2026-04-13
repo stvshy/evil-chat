@@ -269,7 +269,7 @@ export default function App() {
               disabled={!input.trim() || isLoading}
               className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-white text-black hover:bg-zinc-200 disabled:opacity-50 disabled:hover:bg-white transition-colors mb-1 mr-1"
             >
-              <Send className="w-5 h-5 ml-0.5" />
+              <Send className="w-5 h-5 -ml-[1.7px] mt-0.5" />
             </button>
           </form>
           <div className="text-center mt-3">
