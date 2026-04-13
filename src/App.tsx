@@ -20,7 +20,7 @@ const translations = {
   en: {
     title: "EvilChat",
     subtitle: "Local RAG + Groq API",
-    initialMessage: "What do you want? Ask quickly, I don't have all day for your pathetic drivel. 😈",
+    initialMessage: "What do you want? Ask quickly, I don't have all day for your pathetic drivel. 🤡",
     placeholder: "Write something stupid...",
     loading: "EvilChat is thinking...",
     errorConnection: "Failed to connect to the backend. Run the server `python main.py` locally.",
@@ -29,7 +29,7 @@ const translations = {
   pl: {
     title: "EvilChat",
     subtitle: "LOCAL RAG + Groq API",
-    initialMessage: "Czego chcesz? Pytaj szybko, nie mam całego dnia na twoje żałosne wypociny. 😈",
+    initialMessage: "Czego chcesz? Pytaj szybko, nie mam całego dnia na twoje żałosne wypociny. 🤡",
     placeholder: "Napisz coś głupiego...",
     loading: "EvilChat myśli...",
     errorConnection: "Nie udało się połączyć z backendem. Uruchom serwer `python main.py` lokalnie.",
