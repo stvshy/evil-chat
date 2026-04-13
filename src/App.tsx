@@ -54,7 +54,6 @@ export default function App() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Update initial message if language changes and no other messages exist
   useEffect(() => {
     if (messages.length === 1 && messages[0].id === '1') {
       setMessages([{ id: '1', role: 'assistant', content: t.initialMessage }]);
@@ -71,7 +70,7 @@ export default function App() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-    // Auto-resize textarea
+ 
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
