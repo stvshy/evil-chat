@@ -33,7 +33,7 @@ const translations = {
     placeholder: "Napisz coś głupiego...",
     loading: "EvilChat myśli...",
     errorConnection: "Nie udało się połączyć z backendem. Uruchom serwer `python main.py` lokalnie.",
-    footer: "EVILCHAT MOŻE POPEŁNIAĆ BŁĘDY. ALE I TAK JESTEŚ GORSZY."
+    footer: "EVILCHAT MOŻE POPEŁNIAĆ BŁĘDY. ALE I TAK MNIEJ NIŻ TY."
   }
 };
 
@@ -99,7 +99,8 @@ export default function App() {
 
     try {
       // Call the local FastAPI backend
-      const response = await fetch('http://localhost:8000/chat', {
+      const apiUrl = (import.meta as any).env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

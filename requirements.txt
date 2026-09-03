@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+langchain
+langchain-community
+langchain-groq
+langchain-core
+langchain-text-splitters
+pypdf
+chromadb
+huggingface-hub
+sentence-transformers
+requests
+slowapi
+langchain-openai
+gradio
