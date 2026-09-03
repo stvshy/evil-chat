@@ -216,7 +216,7 @@ export default function App() {
                     status.available && !status.checking ? 'bg-green-400' : 'bg-red-500'
                   )}
                 />
-                <span className={cn('text-xs font-medium uppercase tracking-widest', status.available && !status.checking ? 'text-green-400' : 'text-red-500/80')}>
+                <span className={cn('text-[11px] font-medium uppercase tracking-widest', status.available && !status.checking ? 'text-green-400' : 'text-red-500/80')}>
                   {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
                 </span>
               </div>
