@@ -20,6 +20,9 @@ const translations = {
   en: {
     title: "EvilChat",
     subtitle: "Local RAG + Groq API",
+    statusAvailable: "AVAILABLE",
+    statusUnavailable: "UNAVAILABLE",
+    statusChecking: "CHECKING...",
     initialMessage: "What do you want? Ask quickly, I don't have all day for your pathetic drivel. 🤡",
     placeholder: "Write something stupid...",
     loading: "EvilChat is thinking...",
@@ -29,6 +32,9 @@ const translations = {
   pl: {
     title: "EvilChat",
     subtitle: "LOCAL RAG + Groq API",
+    statusAvailable: "DOSTĘPNY",
+    statusUnavailable: "NIEDOSTĘPNY",
+    statusChecking: "SPRAWDZANIE...",
     initialMessage: "Czego chcesz? Pytaj szybko, nie mam całego dnia na twoje żałosne wypociny. 🤡",
     placeholder: "Napisz coś głupiego...",
     loading: "EvilChat myśli...",
@@ -40,6 +46,50 @@ const translations = {
 export default function App() {
   const [lang, setLang] = useState<'en' | 'pl'>('en');
   const t = translations[lang];
+
+  const apiUrl = (import.meta as any).env.VITE_API_URL || 'http://localhost:7860';
+
+  const [status, setStatus] = useState<{ available: boolean; backend: boolean; model: boolean; checking: boolean }>({
+    available: false,
+    backend: false,
+    model: false,
+    checking: true,
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    const initialCheckRef = { current: true } as { current: boolean };
+    async function checkStatus() {
+      if (!mounted) return;
+      // Only show "checking" on the very first check after page load
+      if (initialCheckRef.current) {
+        setStatus((s) => ({ ...s, checking: true }));
+      }
+      try {
+        const res = await fetch(`${apiUrl}/status`);
+        if (!res.ok) throw new Error('status error');
+        const data = await res.json();
+        if (!mounted) return;
+        const backend = Boolean(data.backend);
+        const model = Boolean(data.model);
+        const available = Boolean(data.available ?? (backend && model));
+        setStatus({ available, backend, model, checking: false });
+      } catch (e) {
+        if (!mounted) return;
+        setStatus({ available: false, backend: false, model: false, checking: false });
+      } finally {
+        // mark that initial check finished so subsequent polls won't set checking
+        initialCheckRef.current = false;
+      }
+    }
+
+    checkStatus();
+    const id = window.setInterval(checkStatus, 5000);
+    return () => {
+      mounted = false;
+      clearInterval(id);
+    };
+  }, [apiUrl]);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -158,7 +208,19 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white">{t.title} <span className="text-xl">😈</span></h1>
-            <p className="text-xs font-medium text-red-500/80 uppercase tracking-widest">{t.subtitle}</p>
+            <div className="mt-[2px]">
+              <div className="flex items-center gap-2">
+                <span
+                  className={cn(
+                    'w-2 h-2 rounded-full inline-block',
+                    status.available && !status.checking ? 'bg-green-400' : 'bg-red-500'
+                  )}
+                />
+                <span className={cn('text-xs font-medium uppercase tracking-widest', status.available && !status.checking ? 'text-green-400' : 'text-red-500/80')}>
+                  {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
         
