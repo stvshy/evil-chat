@@ -16,6 +16,9 @@
   <img src="https://img.shields.io/badge/Render-3b2b4a?style=flat&logo=render&logoColor=white" alt="Render">
   <img src="https://img.shields.io/badge/Cloudflare-F38020?style=flat&logo=cloudflare&logoColor=white" alt="Cloudflare">
 </p>
+<h3 align="center">
+  <a href="https://evilchat.stvshy.com/">🔗 Live Demo</a>
+</h3>
 <br>
 
 **EvilChat 😈** is an experimental, satirical AI chat application engineered to be intentionally toxic, sarcastic, and brutally offensive. Moving away from standard, helpful AI assistants, this project explores the boundaries of prompt engineering and "uncensored" LLMs.
