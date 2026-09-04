@@ -25,6 +25,8 @@
 
 🚀 **Powered by Local RAG & Dual-Execution!** The system pulls context from a custom vector database of profanities and allows users to run inference entirely locally (for maximum privacy) or via cloud APIs.
 
+<br>
+
 ## 📸 Application Overview
 
 <table width="100%">
