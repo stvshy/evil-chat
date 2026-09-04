@@ -24,12 +24,28 @@
 
 ## 📸 Application Overview
 
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="78%" align="center">🖥️ Desktop View</th>
+      <th width="22%" align="center">📱 Mobile View</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center" valign="middle">
+        <img src="./public/assets/evilchat-ss1.png" alt="Desktop View" width="100%">
+      </td>
+      <td align="center" valign="middle">
+        <img src="./public/assets/evilchat-ss2.png" alt="Mobile View" width="100%">
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <p align="center">
-  <img src="./public/assets/evilchat-ss1.png" width="65%" alt="Desktop View">
-  &nbsp;&nbsp;&nbsp;
-  <img src="./public/assets/evilchat-ss2.png" width="25%" alt="Mobile View">
+  <i>A meticulously crafted, dark-themed UI that works seamlessly across desktop and mobile devices.</i>
 </p>
-<p align="center"><i>A meticulously crafted, dark-themed UI that works seamlessly across desktop and mobile devices.</i></p>
 
 <br>
 
