@@ -214,11 +214,11 @@ export default function App() {
       {/* Header — na całą szerokość strony */}
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
+          <div className="flex items-center justify-center w-[44px] h-[44px] rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
             <Flame className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">{t.title} <span className="text-xl">😈</span></h1>
+            <h1 className="text-[17.8px] font-bold tracking-tight text-white">{t.title} <span className="text-[18px]">😈</span></h1>
             <div className="mt-[2px]">
               <div className="flex items-center gap-2">
                 <span
@@ -227,7 +227,7 @@ export default function App() {
                     status.available && !status.checking ? 'bg-green-400' : 'bg-red-500'
                   )}
                 />
-                <span className={cn('text-[11px] font-medium uppercase tracking-widest', status.available && !status.checking ? 'text-green-400' : 'text-red-500/80')}>
+                <span className={cn('text-[10.1px] font-medium uppercase tracking-widest', status.available && !status.checking ? 'text-green-400' : 'text-red-500/80')}>
                   {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
                 </span>
               </div>
@@ -351,7 +351,7 @@ export default function App() {
                 </button>
               </form>
               <div className="text-center mt-3">
-                <p className="text-[11px] text-zinc-600 font-medium tracking-wide">
+                <p className="text-[8.3px] text-zinc-600 font-medium tracking-wide mb-[-9px]">
                   {t.footer}
                 </p>
               </div>
