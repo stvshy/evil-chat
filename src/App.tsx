@@ -276,6 +276,23 @@ export default function App() {
           0%, 100% { transform: scaleY(0.3); }
           50% { transform: scaleY(1); }
         }
+        
+        /* Cienki scrollbar pod kolor przycisku zmiany języka (bg-zinc-900, border-zinc-800) */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #18181b; /* odpowiednik Tailwind'owego bg-zinc-900 */
+          border-radius: 10px;
+          border: 0.5px solid #27272a; /* super cienki outline pod kolor border-zinc-800 */
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background-color: #27272a; /* odpowiednik bg-zinc-800 przy hoverze */
+          border-color: #3f3f46;     /* odpowiednik border-zinc-700 */
+        }
       `}</style>
 
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
@@ -318,76 +335,78 @@ export default function App() {
       <div className="flex flex-1 min-h-0">
         <Sidebar lang={lang} onNewChat={handleNewChat} isLoading={isLoading} />
 
-        <div className="flex flex-col flex-1 min-w-0">
-          <main className="flex-1 overflow-y-auto w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={cn(
-                  "flex gap-4 max-w-[85%]",
-                  message.role === 'user' ? "ml-auto flex-row-reverse" : "mr-auto",
-                  message.role === 'system' && "mx-auto max-w-full justify-center"
-                )}
-              >
-                {message.role !== 'system' && (
-                  <div className="flex-shrink-0 mt-1">
-                    {message.role === 'assistant' ? (
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
-                        <Bot className="w-5 h-5 text-red-400" />
-                      </div>
+        <div className="flex flex-col flex-1 min-w-0 relative">
+          <main className="flex-1 overflow-y-auto w-full custom-scrollbar">
+            {/* Zmieniono max-w-4xl na max-w-5xl, co daje szerszy rozstaw poziomy */}
+            <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "flex gap-4",
+                    // Lekka korekta proporcji dla zachowania różnicy wielkości między wiadomościami na większym kontenerze
+                    message.role === 'user' 
+                      ? "ml-auto flex-row-reverse max-w-[95%] md:max-w-[88%]" 
+                      : "mr-auto max-w-[95%] md:max-w-[78%]",
+                    message.role === 'system' && "mx-auto max-w-full justify-center"
+                  )}
+                >
+                  {message.role !== 'system' && (
+                    <div className="flex-shrink-0 mt-1">
+                      {message.role === 'assistant' ? (
+                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
+                          <Bot className="w-5 h-5 text-red-400" />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800">
+                          <User className="w-5 h-5 text-zinc-400" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div
+                    className={cn(
+                      "px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm min-w-0",
+                      message.role === 'user'
+                        ? "bg-zinc-900 text-zinc-100 border border-zinc-800 rounded-tr-sm"
+                        : message.role === 'assistant'
+                        ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
+                        : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
+                    )}
+                  >
+                    {message.role === 'system' && <AlertCircle className="w-4 h-4" />}
+                    {message.role === 'user' || message.role === 'system' ? (
+                      <div className="whitespace-pre-wrap break-words">{message.content}</div>
                     ) : (
-                      // Zmieniony kolor avatara użytkownika, żeby pasował do reszty (bg-zinc-900)
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800">
-                        <User className="w-5 h-5 text-zinc-400" />
+                      <div className="prose prose-invert max-w-none break-words">
+                        <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
                       </div>
                     )}
                   </div>
-                )}
-
-                <div
-                  className={cn(
-                    // Dodany min-w-0 żeby zapobiec rozpychaniu flex-boxa 
-                    "px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm min-w-0",
-                    message.role === 'user'
-                      // Zmieniony kolor bańki wiadomości użytkownika (bg-zinc-900)
-                      ? "bg-zinc-900 text-zinc-100 border border-zinc-800 rounded-tr-sm"
-                      : message.role === 'assistant'
-                      ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
-                      : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
-                  )}
-                >
-                  {message.role === 'system' && <AlertCircle className="w-4 h-4" />}
-                  {message.role === 'user' || message.role === 'system' ? (
-                    // Dodany break-words, żeby poprawnie zawijać teksty takie jak "DDDD..."
-                    <div className="whitespace-pre-wrap break-words">{message.content}</div>
-                  ) : (
-                    // Przesłania zawartości bota
-                    <div className="prose prose-invert max-w-none break-words">
-                      <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
-                    </div>
-                  )}
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {isLoading && (
-              <div className="flex gap-4 max-w-[85%] mr-auto">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
-                    <Bot className="w-5 h-5 text-red-400" />
+              {isLoading && (
+                <div className="flex gap-4 max-w-[95%] md:max-w-[78%] mr-auto">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
+                      <Bot className="w-5 h-5 text-red-400" />
+                    </div>
+                  </div>
+                  <div className="px-5 py-4 rounded-2xl bg-[#111111] border border-red-900/20 rounded-tl-sm flex items-center gap-3">
+                    <Loader2 className="w-4 h-4 text-red-500 animate-spin" />
+                    <span className="text-sm font-medium text-red-500/80 animate-pulse">{t.loading}</span>
                   </div>
                 </div>
-                <div className="px-5 py-4 rounded-2xl bg-[#111111] border border-red-900/20 rounded-tl-sm flex items-center gap-3">
-                  <Loader2 className="w-4 h-4 text-red-500 animate-spin" />
-                  <span className="text-sm font-medium text-red-500/80 animate-pulse">{t.loading}</span>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+              )}
+              <div ref={messagesEndRef} />
+            </div>
           </main>
 
           <div className="w-full bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pt-6 pb-6 px-4">
-            <div className="max-w-4xl mx-auto relative">
+            {/* Tutaj też max-w-5xl aby zgrywało się z szerokością wiadomości */}
+            <div className="max-w-5xl mx-auto relative">
               {error && (
                 <div className="absolute -top-12 left-0 right-0 flex justify-center">
                   <div className="bg-red-950/80 text-red-400 text-xs px-4 py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
@@ -417,7 +436,6 @@ export default function App() {
                       "flex items-center justify-center w-10 h-10 rounded-full transition-colors border",
                       isListening
                         ? "bg-[#220000] border-red-900/50 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
-                        // Zmieniony kolor przycisku mikrofonu na zgrywający się z przyciskiem zmiany języka (bg-zinc-900)
                         : "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
                     )}
                     title={isListening ? "Stop listening" : "Speech to text"}
