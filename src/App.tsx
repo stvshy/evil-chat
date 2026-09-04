@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import ReactCountryFlag from 'react-country-flag';
+import Sidebar from './Sidebar';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -198,9 +199,19 @@ export default function App() {
     setLang(prev => prev === 'en' ? 'pl' : 'en');
   };
 
+  // Nowy czat: czyści konwersację i wraca do wiadomości powitalnej.
+  const handleNewChat = () => {
+    setMessages([{ id: Date.now().toString(), role: 'assistant', content: t.initialMessage }]);
+    setInput('');
+    setError(null);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
-      {/* Header */}
+      {/* Header — na całą szerokość strony */}
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
@@ -223,7 +234,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        
+
         {/* Language Toggle */}
         <button
           onClick={toggleLanguage}
@@ -239,105 +250,112 @@ export default function App() {
         </button>
       </header>
 
-      {/* Chat Area */}
-      <main className="flex-1 overflow-y-auto w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              "flex gap-4 max-w-[85%]",
-              message.role === 'user' ? "ml-auto flex-row-reverse" : "mr-auto",
-              message.role === 'system' && "mx-auto max-w-full justify-center"
-            )}
-          >
-            {message.role !== 'system' && (
-              <div className="flex-shrink-0 mt-1">
-                {message.role === 'assistant' ? (
+      {/* Poniżej headera: sidebar + treść czatu obok siebie */}
+      <div className="flex flex-1 min-h-0">
+        <Sidebar lang={lang} onNewChat={handleNewChat} isLoading={isLoading} />
+
+        <div className="flex flex-col flex-1 min-w-0">
+          {/* Chat Area */}
+          <main className="flex-1 overflow-y-auto w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex gap-4 max-w-[85%]",
+                  message.role === 'user' ? "ml-auto flex-row-reverse" : "mr-auto",
+                  message.role === 'system' && "mx-auto max-w-full justify-center"
+                )}
+              >
+                {message.role !== 'system' && (
+                  <div className="flex-shrink-0 mt-1">
+                    {message.role === 'assistant' ? (
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
+                        <Bot className="w-5 h-5 text-red-400" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700">
+                        <User className="w-5 h-5 text-zinc-400" />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div
+                  className={cn(
+                    "px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm",
+                    message.role === 'user'
+                      ? "bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 rounded-tr-sm"
+                      : message.role === 'assistant'
+                      ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
+                      : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
+                  )}
+                >
+                  {message.role === 'system' && <AlertCircle className="w-4 h-4" />}
+                  {message.role === 'user' || message.role === 'system' ? (
+                    <div className="whitespace-pre-wrap">{message.content}</div>
+                  ) : (
+                    <div className="prose prose-invert max-w-none">
+                      <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {isLoading && (
+              <div className="flex gap-4 max-w-[85%] mr-auto">
+                <div className="flex-shrink-0 mt-1">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
                     <Bot className="w-5 h-5 text-red-400" />
                   </div>
-                ) : (
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700">
-                    <User className="w-5 h-5 text-zinc-400" />
-                  </div>
-                )}
+                </div>
+                <div className="px-5 py-4 rounded-2xl bg-[#111111] border border-red-900/20 rounded-tl-sm flex items-center gap-3">
+                  <Loader2 className="w-4 h-4 text-red-500 animate-spin" />
+                  <span className="text-sm font-medium text-red-500/80 animate-pulse">{t.loading}</span>
+                </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
+          </main>
 
-            <div
-              className={cn(
-                "px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm",
-                message.role === 'user'
-                  ? "bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 rounded-tr-sm"
-                  : message.role === 'assistant'
-                  ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
-                  : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
-              )}
-            >
-              {message.role === 'system' && <AlertCircle className="w-4 h-4" />}
-              {message.role === 'user' || message.role === 'system' ? (
-                <div className="whitespace-pre-wrap">{message.content}</div>
-              ) : (
-                <div className="prose prose-invert max-w-none">
-                  <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
+          {/* Input Area */}
+          <div className="w-full bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pt-6 pb-6 px-4">
+            <div className="max-w-4xl mx-auto relative">
+              {error && (
+                <div className="absolute -top-12 left-0 right-0 flex justify-center">
+                  <div className="bg-red-950/80 text-red-400 text-xs px-4 py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
+                    <AlertCircle className="w-3 h-3" />
+                    {error}
+                  </div>
                 </div>
               )}
-            </div>
-          </div>
-        ))}
-
-        {isLoading && (
-          <div className="flex gap-4 max-w-[85%] mr-auto">
-            <div className="flex-shrink-0 mt-1">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
-                <Bot className="w-5 h-5 text-red-400" />
+              <form
+                onSubmit={handleSubmit}
+                className="relative flex items-end gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-xl focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
+              >
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder={t.placeholder}
+                  className="w-full max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-4 py-3 outline-none resize-none overflow-y-auto text-[15px]"
+                  rows={1}
+                />
+                <button
+                  type="submit"
+                  disabled={!input.trim() || isLoading}
+                  className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-white text-black hover:bg-zinc-200 disabled:opacity-50 disabled:hover:bg-white transition-colors mb-1 mr-1"
+                >
+                  <Send className="w-5 h-5 -ml-[1.7px] mt-0.5" />
+                </button>
+              </form>
+              <div className="text-center mt-3">
+                <p className="text-[11px] text-zinc-600 font-medium tracking-wide">
+                  {t.footer}
+                </p>
               </div>
             </div>
-            <div className="px-5 py-4 rounded-2xl bg-[#111111] border border-red-900/20 rounded-tl-sm flex items-center gap-3">
-              <Loader2 className="w-4 h-4 text-red-500 animate-spin" />
-              <span className="text-sm font-medium text-red-500/80 animate-pulse">{t.loading}</span>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </main>
-
-      {/* Input Area */}
-      <div className="w-full bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pt-6 pb-6 px-4">
-        <div className="max-w-4xl mx-auto relative">
-          {error && (
-            <div className="absolute -top-12 left-0 right-0 flex justify-center">
-              <div className="bg-red-950/80 text-red-400 text-xs px-4 py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
-                <AlertCircle className="w-3 h-3" />
-                {error}
-              </div>
-            </div>
-          )}
-          <form
-            onSubmit={handleSubmit}
-            className="relative flex items-end gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-xl focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
-          >
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder={t.placeholder}
-              className="w-full max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-4 py-3 outline-none resize-none overflow-y-auto text-[15px]"
-              rows={1}
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-white text-black hover:bg-zinc-200 disabled:opacity-50 disabled:hover:bg-white transition-colors mb-1 mr-1"
-            >
-              <Send className="w-5 h-5 -ml-[1.7px] mt-0.5" />
-            </button>
-          </form>
-          <div className="text-center mt-3">
-            <p className="text-[11px] text-zinc-600 font-medium tracking-wide">
-              {t.footer}
-            </p>
           </div>
         </div>
       </div>
