@@ -4,14 +4,11 @@ pydantic
 python-dotenv
 langchain
 langchain-community
-langchain-groq
 langchain-core
 langchain-text-splitters
 pypdf
 chromadb
-huggingface-hub
-sentence-transformers
+fastembed
 requests
 slowapi
 langchain-openai
-gradio

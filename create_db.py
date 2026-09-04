@@ -11,7 +11,7 @@ load_dotenv()
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_community.vectorstores import Chroma
 
 PDF_FOLDER = "./docs"
@@ -73,7 +73,7 @@ def create_and_persist_database():
 
     # Krok 3: Inicjalizacja modelu embeddings
     print("\n3️⃣ Inicjalizuję model embeddings (HuggingFace)...")
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    embeddings = FastEmbedEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
     # Krok 4: Tworzenie i zapisywanie bazy Chroma na dysk
     print(f"\n4️⃣ Tworzę bazę Chroma i zapisuję do '{CHROMA_DB_PATH}'...")

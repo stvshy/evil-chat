@@ -13,7 +13,7 @@ from slowapi.errors import RateLimitExceeded
 warnings.filterwarnings("ignore")
 load_dotenv()
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.llms import Ollama
 from langchain_core.prompts import PromptTemplate
@@ -69,7 +69,7 @@ async def startup_event():
                 f"Uruchom najpierw: python create_db.py"
             )
 
-        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        embeddings = FastEmbedEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         vectorstore = Chroma(
             persist_directory=CHROMA_DB_PATH,
             embedding_function=embeddings
