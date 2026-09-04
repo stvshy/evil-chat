@@ -84,3 +84,17 @@ body {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* Animacja i kursor dla wszystkich klikalnych elementów (z pominięciem zablokowanych) */
+button:not(:disabled), 
+a {
+  cursor: pointer;
+  /* Płynne przejście transformacji */
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efekt "wciśnięcia" przycisku po kliknięciu (active) */
+button:not(:disabled):active, 
+a:active {
+  transform: scale(0.94);
+}
