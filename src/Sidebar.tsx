@@ -42,7 +42,7 @@ const sidebarText = {
 const glass = 'bg-white/[0.02] backdrop-blur-xl border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]';
 // Gradientowe szkło dla wyboru modelu
 const glassGradient = 'bg-gradient-to-br from-white/[0.06] via-transparent to-black/40 backdrop-blur-xl border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]';
-// "Duchowe", bardzo przezroczyste i niewyraźne szkło dla historii czatów
+// Bardzo przezroczyste i niewyraźne szkło dla historii czatów
 const glassGhost = 'bg-black/10 backdrop-blur-md border border-white/[0.03] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.01)]';
 
 export default function Sidebar({ lang, onNewChat, isLoading }: SidebarProps) {
@@ -67,7 +67,7 @@ export default function Sidebar({ lang, onNewChat, isLoading }: SidebarProps) {
         </button>
       </div>
 
-      {/* Historia czatów - usunięto rozjaśnienie (glow), dodano przezroczysty glassGhost */}
+      {/* Historia czatów */}
       <div className="flex-1 min-h-0 px-4 pt-1 pb-3 flex flex-col">
         <div className="flex items-center justify-between px-1 pb-2 shrink-0">
           <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">

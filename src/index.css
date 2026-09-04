@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Istniejące czcionki */
+/* Czcionki */
 @font-face {
   font-family: 'Cinzel';
   src: url('/assets/fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
@@ -15,7 +15,6 @@
   font-style: normal;
 }
 
-/* NOWE CZCIONKI */
 @font-face {
   font-family: 'Urbanist';
   src: url('/assets/fonts/Urbanist-VariableFont_wght.ttf') format('truetype');
@@ -81,7 +80,7 @@ body {
 }
 
 
-/* Custom scrollbar for dark mode */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

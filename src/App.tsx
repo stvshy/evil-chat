@@ -300,7 +300,7 @@ export default function App() {
             <Flame className="w-6 h-6 text-white" />
           </div>
           <div>
-<h1 className="text-[17.8px] font-bold tracking-tight text-white">{t.title} <span className="text-[18px]">😈</span></h1>            <div className="mt-[2px]">
+            <h1 className="text-[17.8px] font-bold tracking-tight text-white">{t.title} <span className="text-[18px]">😈</span></h1>            <div className="mt-[2px]">
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
@@ -308,12 +308,12 @@ export default function App() {
                     status.available && !status.checking ? 'bg-green-400' : 'bg-red-500'
                   )}
                 />
-               <span className={cn(
-  'font-tech text-[10.8px] font-semibold uppercase tracking-widest', 
-  status.available && !status.checking ? 'text-green-400' : 'text-red-500/80'
-)}>
-  {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
-</span>
+                <span className={cn(
+                  'font-tech text-[10.8px] font-semibold uppercase tracking-widest', 
+                  status.available && !status.checking ? 'text-green-400' : 'text-red-500/80'
+                )}>
+                  {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
+                </span>
               </div>
             </div>
           </div>
@@ -339,7 +339,6 @@ export default function App() {
         <div className="flex flex-col flex-1 min-w-0 relative">
           
           <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
-            {/* Zmieniono na z pb-72 na pb-40 (ok. 160px), by zmniejszyć "dziurę" na dole. */}
             <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 space-y-8">
               {messages.map((message) => (
                 <div
@@ -367,18 +366,18 @@ export default function App() {
                   )}
 
                   <div
-  className={cn(
-    "font-chat px-5 py-4 rounded-2xl text-[14.7px] leading-relaxed shadow-sm min-w-0",
-    message.role === 'user'
-      ? "bg-zinc-900 text-zinc-100 border border-zinc-800 rounded-tr-sm"
-      : message.role === 'assistant'
-      ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
-      : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
-  )}
-  style={{ wordSpacing: '0.6px',
-    letterSpacing: '0.3px'
-   }}
->
+                    className={cn(
+                      "font-chat px-5 py-4 rounded-2xl text-[14.7px] leading-relaxed shadow-sm min-w-0",
+                      message.role === 'user'
+                        ? "bg-zinc-900 text-zinc-100 border border-zinc-800 rounded-tr-sm"
+                        : message.role === 'assistant'
+                        ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
+                        : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
+                    )}
+                    style={{ wordSpacing: '0.6px',
+                      letterSpacing: '0.3px'
+                    }}
+                  >
                     {message.role === 'system' && <AlertCircle className="w-4 h-4" />}
                     {message.role === 'user' || message.role === 'system' ? (
                       <div className="whitespace-pre-wrap break-words">{message.content}</div>
@@ -412,15 +411,12 @@ export default function App() {
             
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
-              
-              {/* Blur rośnie o wiele szybciej. Zmieniono granice przejść i zwiększono max blur do 32px */}
               <div className="absolute inset-0 backdrop-blur-[2px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[8px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[16px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 60%, black 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 60%, black 85%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[32px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)' }} />
             </div>
-            
-            {/* Zmieniono pt-32 na pt-16 (obszar przejścia jest krótszy i szybszy) i pb-10 na pb-8 */}
+        
             <div className="max-w-5xl mx-auto relative pt-16 pb-8 px-4 w-full pointer-events-auto">
               {error && (
                 <div className="absolute top-2 left-0 right-0 flex justify-center">
@@ -435,14 +431,14 @@ export default function App() {
                 className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-2xl shadow-black/50 focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
               >
                <textarea
-  ref={textareaRef}
-  value={input}
-  onChange={handleInputChange}
-  onKeyDown={handleKeyDown}
-  placeholder={t.placeholder}
-  className="font-chat w-full max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-4 py-3 outline-none resize-none overflow-y-auto text-[15.3px]"
-  rows={1}
-/>
+                ref={textareaRef}
+                value={input}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder={t.placeholder}
+                className="font-chat w-full max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-4 py-3 outline-none resize-none overflow-y-auto text-[15.3px]"
+                rows={1}
+               />
                 <div className="flex items-center gap-2 flex-shrink-0 mr-1">
                   <button
                     type="button"
@@ -476,10 +472,10 @@ export default function App() {
                 </div>
               </form>
               <div className="text-center mt-3">
-  <p className="font-tech text-[9.5px] text-zinc-600 font-semibold uppercase tracking-[0.9px] mb-[-17px]">
-    {t.footer}
-  </p>
-</div>
+                <p className="font-tech text-[9.5px] text-zinc-600 font-semibold uppercase tracking-[0.9px] mb-[-17px]">
+                  {t.footer}
+                </p>
+              </div>
             </div>
           </div>
         </div>
