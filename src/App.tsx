@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Flame, Loader2, AlertCircle } from 'lucide-react';
+import { Send, Bot, User, Flame, Loader2, AlertCircle, Mic } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { clsx, type ClassValue } from 'clsx';
@@ -57,12 +57,15 @@ export default function App() {
     checking: true,
   });
 
+  // Web STT (Rozpoznawanie mowy) state & ref
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
   useEffect(() => {
     let mounted = true;
     const initialCheckRef = { current: true } as { current: boolean };
     async function checkStatus() {
       if (!mounted) return;
-      // Only show "checking" on the very first check after page load
       if (initialCheckRef.current) {
         setStatus((s) => ({ ...s, checking: true }));
       }
@@ -79,7 +82,6 @@ export default function App() {
         if (!mounted) return;
         setStatus({ available: false, backend: false, model: false, checking: false });
       } finally {
-        // mark that initial check finished so subsequent polls won't set checking
         initialCheckRef.current = false;
       }
     }
@@ -91,6 +93,15 @@ export default function App() {
       clearInterval(id);
     };
   }, [apiUrl]);
+
+  // Clean up speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -128,9 +139,66 @@ export default function App() {
     }
   };
 
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert(lang === 'pl' ? 'Twoja przeglądarka nie obsługuje rozpoznawania mowy.' : 'Your browser does not support Speech Recognition.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = lang === 'pl' ? 'pl-PL' : 'en-US';
+
+    const originalInput = input;
+
+    recognition.onstart = () => setIsListening(true);
+
+    recognition.onresult = (e: any) => {
+      let currentTranscript = '';
+      for (let i = 0; i < e.results.length; i++) {
+        currentTranscript += e.results[i][0].transcript;
+      }
+      
+      const separator = originalInput.trim().length > 0 ? ' ' : '';
+      const newText = originalInput + separator + currentTranscript;
+      
+      setInput(newText);
+
+      // Dostosuj wysokość textarea w miarę mówienia
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+      }
+    };
+
+    recognition.onerror = (e: any) => {
+      console.error('Speech recognition error', e.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+    recognitionRef.current = recognition;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+
+    // Przerwij nasłuchiwanie w momencie wysyłania
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -143,13 +211,11 @@ export default function App() {
     setError(null);
     setIsLoading(true);
 
-    // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
 
     try {
-      // Call the local FastAPI backend
       const apiUrl = (import.meta as any).env.VITE_API_URL || 'http://localhost:8000';
       const response = await fetch(`${apiUrl}/chat`, {
         method: 'POST',
@@ -174,7 +240,6 @@ export default function App() {
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred.');
-      // Add a system error message
       setMessages((prev) => [
         ...prev,
         {
@@ -199,7 +264,6 @@ export default function App() {
     setLang(prev => prev === 'en' ? 'pl' : 'en');
   };
 
-  // Nowy czat: czyści konwersację i wraca do wiadomości powitalnej.
   const handleNewChat = () => {
     setMessages([{ id: Date.now().toString(), role: 'assistant', content: t.initialMessage }]);
     setInput('');
@@ -211,7 +275,14 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
-      {/* Header — na całą szerokość strony */}
+      {/* Dodany wewnątrz komponentu styl dla animacji fal dźwiękowych */}
+      <style>{`
+        @keyframes wave-scale {
+          0%, 100% { transform: scaleY(0.3); }
+          50% { transform: scaleY(1); }
+        }
+      `}</style>
+
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-[44px] h-[44px] rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
@@ -235,7 +306,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Language Toggle */}
         <button
           onClick={toggleLanguage}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition-colors"
@@ -250,12 +320,10 @@ export default function App() {
         </button>
       </header>
 
-      {/* Poniżej headera: sidebar + treść czatu obok siebie */}
       <div className="flex flex-1 min-h-0">
         <Sidebar lang={lang} onNewChat={handleNewChat} isLoading={isLoading} />
 
         <div className="flex flex-col flex-1 min-w-0">
-          {/* Chat Area */}
           <main className="flex-1 overflow-y-auto w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
             {messages.map((message) => (
               <div
@@ -318,7 +386,6 @@ export default function App() {
             <div ref={messagesEndRef} />
           </main>
 
-          {/* Input Area */}
           <div className="w-full bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pt-6 pb-6 px-4">
             <div className="max-w-4xl mx-auto relative">
               {error && (
@@ -329,9 +396,10 @@ export default function App() {
                   </div>
                 </div>
               )}
+              {/* Formularz ma teraz "items-center", co centruje wszystkie przyciski idealnie w pionie wg textarea */}
               <form
                 onSubmit={handleSubmit}
-                className="relative flex items-end gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-xl focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
+                className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-xl focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
               >
                 <textarea
                   ref={textareaRef}
@@ -342,13 +410,40 @@ export default function App() {
                   className="w-full max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-4 py-3 outline-none resize-none overflow-y-auto text-[15px]"
                   rows={1}
                 />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || isLoading}
-                  className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-white text-black hover:bg-zinc-200 disabled:opacity-50 disabled:hover:bg-white transition-colors mb-1 mr-1"
-                >
-                  <Send className="w-5 h-5 -ml-[1.7px] mt-0.5" />
-                </button>
+                <div className="flex items-center gap-2 flex-shrink-0 mr-1">
+                  {/* Przycisk mikrofonu (STT) */}
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    className={cn(
+                      "flex items-center justify-center w-10 h-10 rounded-full transition-colors border",
+                      isListening
+                        ? "bg-[#220000] border-red-900/50 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
+                        : "bg-zinc-800 border-zinc-700/50 text-zinc-300 hover:bg-zinc-700"
+                    )}
+                    title={isListening ? "Stop listening" : "Speech to text"}
+                  >
+                    {isListening ? (
+                      // Animacja fal dźwiękowych
+                      <div className="flex items-center justify-center gap-[3px] h-4 w-4">
+                        <div className="w-[3px] h-full bg-current rounded-full animate-[wave-scale_1s_ease-in-out_infinite]" style={{ animationDelay: '0ms' }} />
+                        <div className="w-[3px] h-full bg-current rounded-full animate-[wave-scale_1s_ease-in-out_infinite]" style={{ animationDelay: '200ms' }} />
+                        <div className="w-[3px] h-full bg-current rounded-full animate-[wave-scale_1s_ease-in-out_infinite]" style={{ animationDelay: '400ms' }} />
+                      </div>
+                    ) : (
+                      <Mic className="w-5 h-5" />
+                    )}
+                  </button>
+
+                  {/* Czerwony przycisk do wysyłania (podobny do tego z New Chat) */}
+                  <button
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-red-600 transition-colors"
+                  >
+                    <Send className="w-5 h-5 -ml-[1.7px] mt-0.5" />
+                  </button>
+                </div>
               </form>
               <div className="text-center mt-3">
                 <p className="text-[8.3px] text-zinc-600 font-medium tracking-wide mb-[-9px]">
