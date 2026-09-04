@@ -181,6 +181,15 @@ Your toxic response:"""
 @app.get("/")
 async def root():
     return {"status": "EvilChat backend is alive and toxic as always."}
+
+@app.get("/status")
+async def status():
+    return {
+        "available": True,
+        "backend": True,
+        "model": True
+    }
+
 # ==================== ENDPOINT /chat ====================
 @app.post("/chat")
 @limiter.limit("5/minute")
