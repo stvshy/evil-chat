@@ -270,7 +270,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
+    <div className="flex flex-col h-screen overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
       <style>{`
         @keyframes wave-scale {
           0%, 100% { transform: scaleY(0.3); }
@@ -284,9 +284,9 @@ export default function App() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: #1f1f22; /* odpowiednik zaktualizowanego tła */
+          background-color: #1f1f22; 
           border-radius: 10px;
-          border: 0.5px solid #27272a; /* super cienki outline pod kolor border-zinc-800 */
+          border: 0.5px solid #27272a; 
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background-color: #27272a; 
@@ -334,13 +334,11 @@ export default function App() {
       <div className="flex flex-1 min-h-0 relative">
         <Sidebar lang={lang} onNewChat={handleNewChat} isLoading={isLoading} />
 
-        {/* Kontener na prawo - ustawiony jako relative, aby dzieci "absolute" pozycjonowały się względem niego */}
         <div className="flex flex-col flex-1 min-w-0 relative">
           
-          {/* Obszar wiadomości - Flex 1 z overflow zajmuje CAŁĄ wysokość widoku z własnym scrollbarem! */}
           <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
-            {/* Dodano duże pb-64 (256px), abyś mógł spokojnie doscrollować ostatnie wiadomości powyżej lewitującego inputa */}
-            <div className="max-w-5xl mx-auto px-4 pt-8 pb-64 space-y-8">
+            {/* Zmieniono na z pb-72 na pb-40 (ok. 160px), by zmniejszyć "dziurę" na dole. */}
+            <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 space-y-8">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -405,23 +403,22 @@ export default function App() {
             </div>
           </main>
 
-          {/* Lewitujący Input - absolute z bottom-0, 
-              Zostawione right-[8px] aby NIE zasłaniać scrollbara przy prawej krawędzi! */}
-          <div className="absolute bottom-0 left-0 right-[8px] z-10 pointer-events-none">
+          <div className="absolute -bottom-2 left-0 right-[8px] z-10 pointer-events-none">
             
-            {/* Piękny zablurowany lewitujący efekt, używając CSS mask, żeby krawędź u góry płynnie wygasała, zamiast twardo się ucinać */}
-            <div 
-              className="absolute inset-0 bg-[#050505]/50 backdrop-blur-md pointer-events-none"
-              style={{
-                maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)',
-                WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)'
-              }}
-            />
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
+              
+              {/* Blur rośnie o wiele szybciej. Zmieniono granice przejść i zwiększono max blur do 32px */}
+              <div className="absolute inset-0 backdrop-blur-[2px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)' }} />
+              <div className="absolute inset-0 backdrop-blur-[8px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)' }} />
+              <div className="absolute inset-0 backdrop-blur-[16px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 60%, black 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 60%, black 85%, black 100%)' }} />
+              <div className="absolute inset-0 backdrop-blur-[32px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)' }} />
+            </div>
             
-            {/* Kontener wpisywania ma pointer-events-auto, aby przyciski wciąż działały */}
-            <div className="max-w-5xl mx-auto relative pt-20 pb-8 px-4 pointer-events-auto">
+            {/* Zmieniono pt-32 na pt-16 (obszar przejścia jest krótszy i szybszy) i pb-10 na pb-8 */}
+            <div className="max-w-5xl mx-auto relative pt-16 pb-8 px-4 w-full pointer-events-auto">
               {error && (
-                <div className="absolute -top-6 left-0 right-0 flex justify-center">
+                <div className="absolute top-2 left-0 right-0 flex justify-center">
                   <div className="bg-red-950/80 text-red-400 text-xs px-4 py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
                     <AlertCircle className="w-3 h-3" />
                     {error}
@@ -474,7 +471,7 @@ export default function App() {
                 </div>
               </form>
               <div className="text-center mt-3">
-                <p className="text-[8.3px] text-zinc-600 font-medium tracking-wide mb-[-9px]">
+                <p className="text-[8.3px] text-zinc-600 font-medium tracking-wide mb-[-17px]">
                   {t.footer}
                 </p>
               </div>
