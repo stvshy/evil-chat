@@ -57,7 +57,6 @@ export default function App() {
     checking: true,
   });
 
-  // Web STT (Rozpoznawanie mowy) state & ref
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
@@ -94,7 +93,6 @@ export default function App() {
     };
   }, [apiUrl]);
 
-  // Clean up speech recognition on unmount
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
@@ -172,7 +170,6 @@ export default function App() {
       
       setInput(newText);
 
-      // Dostosuj wysokość textarea w miarę mówienia
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
         textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
@@ -194,7 +191,6 @@ export default function App() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    // Przerwij nasłuchiwanie w momencie wysyłania
     if (isListening) {
       recognitionRef.current?.stop();
       setIsListening(false);
@@ -275,7 +271,6 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
-      {/* Dodany wewnątrz komponentu styl dla animacji fal dźwiękowych */}
       <style>{`
         @keyframes wave-scale {
           0%, 100% { transform: scaleY(0.3); }
@@ -341,7 +336,8 @@ export default function App() {
                         <Bot className="w-5 h-5 text-red-400" />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700">
+                      // Zmieniony kolor avatara użytkownika, żeby pasował do reszty (bg-zinc-900)
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800">
                         <User className="w-5 h-5 text-zinc-400" />
                       </div>
                     )}
@@ -350,9 +346,11 @@ export default function App() {
 
                 <div
                   className={cn(
-                    "px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm",
+                    // Dodany min-w-0 żeby zapobiec rozpychaniu flex-boxa 
+                    "px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm min-w-0",
                     message.role === 'user'
-                      ? "bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 rounded-tr-sm"
+                      // Zmieniony kolor bańki wiadomości użytkownika (bg-zinc-900)
+                      ? "bg-zinc-900 text-zinc-100 border border-zinc-800 rounded-tr-sm"
                       : message.role === 'assistant'
                       ? "bg-[#111111] text-zinc-300 border border-red-900/20 rounded-tl-sm"
                       : "bg-red-950/30 text-red-400 border border-red-900/50 rounded-xl text-sm flex items-center gap-2"
@@ -360,9 +358,11 @@ export default function App() {
                 >
                   {message.role === 'system' && <AlertCircle className="w-4 h-4" />}
                   {message.role === 'user' || message.role === 'system' ? (
-                    <div className="whitespace-pre-wrap">{message.content}</div>
+                    // Dodany break-words, żeby poprawnie zawijać teksty takie jak "DDDD..."
+                    <div className="whitespace-pre-wrap break-words">{message.content}</div>
                   ) : (
-                    <div className="prose prose-invert max-w-none">
+                    // Przesłania zawartości bota
+                    <div className="prose prose-invert max-w-none break-words">
                       <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
                     </div>
                   )}
@@ -396,7 +396,6 @@ export default function App() {
                   </div>
                 </div>
               )}
-              {/* Formularz ma teraz "items-center", co centruje wszystkie przyciski idealnie w pionie wg textarea */}
               <form
                 onSubmit={handleSubmit}
                 className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-xl focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
@@ -411,7 +410,6 @@ export default function App() {
                   rows={1}
                 />
                 <div className="flex items-center gap-2 flex-shrink-0 mr-1">
-                  {/* Przycisk mikrofonu (STT) */}
                   <button
                     type="button"
                     onClick={toggleListening}
@@ -419,12 +417,12 @@ export default function App() {
                       "flex items-center justify-center w-10 h-10 rounded-full transition-colors border",
                       isListening
                         ? "bg-[#220000] border-red-900/50 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
-                        : "bg-zinc-800 border-zinc-700/50 text-zinc-300 hover:bg-zinc-700"
+                        // Zmieniony kolor przycisku mikrofonu na zgrywający się z przyciskiem zmiany języka (bg-zinc-900)
+                        : "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
                     )}
                     title={isListening ? "Stop listening" : "Speech to text"}
                   >
                     {isListening ? (
-                      // Animacja fal dźwiękowych
                       <div className="flex items-center justify-center gap-[3px] h-4 w-4">
                         <div className="w-[3px] h-full bg-current rounded-full animate-[wave-scale_1s_ease-in-out_infinite]" style={{ animationDelay: '0ms' }} />
                         <div className="w-[3px] h-full bg-current rounded-full animate-[wave-scale_1s_ease-in-out_infinite]" style={{ animationDelay: '200ms' }} />
@@ -435,7 +433,6 @@ export default function App() {
                     )}
                   </button>
 
-                  {/* Czerwony przycisk do wysyłania (podobny do tego z New Chat) */}
                   <button
                     type="submit"
                     disabled={!input.trim() || isLoading}
