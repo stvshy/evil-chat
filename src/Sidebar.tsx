@@ -56,12 +56,12 @@ export default function Sidebar({ lang, onNewChat, isLoading }: SidebarProps) {
 
       {/* New Chat */}
       <div className="p-4 shrink-0">
-        <button
-          type="button"
-          onClick={onNewChat}
-          disabled={isLoading}
-          className="group w-full flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-red-700 to-red-900 text-white font-semibold text-sm shadow-[0_0_20px_rgba(220,38,38,0.14)] border border-red-700/50 hover:from-red-600 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
+      <button
+  type="button"
+  onClick={onNewChat}
+  disabled={isLoading}
+  className="font-ui uppercase tracking-wider group w-full flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-red-700 to-red-900 text-white font-semibold text-sm shadow-[0_0_20px_rgba(220,38,38,0.14)] border border-red-700/50 hover:from-red-600 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+>
           <Plus className="w-4 h-4" />
           <span>{s.newChat}</span>
         </button>
