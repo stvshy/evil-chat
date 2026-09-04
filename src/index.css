@@ -3,14 +3,14 @@
 /* Istniejące czcionki */
 @font-face {
   font-family: 'Cinzel';
-  src: url('./assets/fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
   font-weight: 400 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Jost';
-  src: url('./assets/fonts/Jost-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Jost-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
 }
@@ -18,49 +18,49 @@
 /* NOWE CZCIONKI */
 @font-face {
   font-family: 'Urbanist';
-  src: url('./assets/fonts/Urbanist-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Urbanist-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Saira';
-  src: url('./assets/fonts/Saira-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Saira-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Fustat';
-  src: url('./assets/fonts/Fustat-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Fustat-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'EB Garamond';
-  src: url('./assets/fonts/EBGaramond-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/EBGaramond-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Baskerville';
-  src: url('./assets/fonts/Baskerville-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Baskerville-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Libre Baskerville';
-  src: url('./assets/fonts/LibreBaskerville-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/LibreBaskerville-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'RedHat';
-  src: url('./assets/fonts/RedHat-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/RedHat-VariableFont_wght.ttf') format('truetype');
   font-weight: 300 900;
   font-style: normal;
 }
