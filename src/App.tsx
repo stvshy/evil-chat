@@ -277,7 +277,6 @@ export default function App() {
           50% { transform: scaleY(1); }
         }
         
-        /* Cienki scrollbar pod kolor przycisku zmiany języka (bg-zinc-900, border-zinc-800) */
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
         }
@@ -285,17 +284,17 @@ export default function App() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: #18181b; /* odpowiednik Tailwind'owego bg-zinc-900 */
+          background-color: #1f1f22; /* odpowiednik zaktualizowanego tła */
           border-radius: 10px;
           border: 0.5px solid #27272a; /* super cienki outline pod kolor border-zinc-800 */
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background-color: #27272a; /* odpowiednik bg-zinc-800 przy hoverze */
-          border-color: #3f3f46;     /* odpowiednik border-zinc-700 */
+          background-color: #27272a; 
+          border-color: #3f3f46;     
         }
       `}</style>
 
-      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
+      <header className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-[44px] h-[44px] rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
             <Flame className="w-6 h-6 text-white" />
@@ -332,19 +331,21 @@ export default function App() {
         </button>
       </header>
 
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 relative">
         <Sidebar lang={lang} onNewChat={handleNewChat} isLoading={isLoading} />
 
+        {/* Kontener na prawo - ustawiony jako relative, aby dzieci "absolute" pozycjonowały się względem niego */}
         <div className="flex flex-col flex-1 min-w-0 relative">
-          <main className="flex-1 overflow-y-auto w-full custom-scrollbar">
-            {/* Zmieniono max-w-4xl na max-w-5xl, co daje szerszy rozstaw poziomy */}
-            <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+          
+          {/* Obszar wiadomości - Flex 1 z overflow zajmuje CAŁĄ wysokość widoku z własnym scrollbarem! */}
+          <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
+            {/* Dodano duże pb-64 (256px), abyś mógł spokojnie doscrollować ostatnie wiadomości powyżej lewitującego inputa */}
+            <div className="max-w-5xl mx-auto px-4 pt-8 pb-64 space-y-8">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={cn(
                     "flex gap-4",
-                    // Lekka korekta proporcji dla zachowania różnicy wielkości między wiadomościami na większym kontenerze
                     message.role === 'user' 
                       ? "ml-auto flex-row-reverse max-w-[95%] md:max-w-[88%]" 
                       : "mr-auto max-w-[95%] md:max-w-[78%]",
@@ -404,11 +405,23 @@ export default function App() {
             </div>
           </main>
 
-          <div className="w-full bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pt-6 pb-6 px-4">
-            {/* Tutaj też max-w-5xl aby zgrywało się z szerokością wiadomości */}
-            <div className="max-w-5xl mx-auto relative">
+          {/* Lewitujący Input - absolute z bottom-0, 
+              Zostawione right-[8px] aby NIE zasłaniać scrollbara przy prawej krawędzi! */}
+          <div className="absolute bottom-0 left-0 right-[8px] z-10 pointer-events-none">
+            
+            {/* Piękny zablurowany lewitujący efekt, używając CSS mask, żeby krawędź u góry płynnie wygasała, zamiast twardo się ucinać */}
+            <div 
+              className="absolute inset-0 bg-[#050505]/50 backdrop-blur-md pointer-events-none"
+              style={{
+                maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)'
+              }}
+            />
+            
+            {/* Kontener wpisywania ma pointer-events-auto, aby przyciski wciąż działały */}
+            <div className="max-w-5xl mx-auto relative pt-20 pb-8 px-4 pointer-events-auto">
               {error && (
-                <div className="absolute -top-12 left-0 right-0 flex justify-center">
+                <div className="absolute -top-6 left-0 right-0 flex justify-center">
                   <div className="bg-red-950/80 text-red-400 text-xs px-4 py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
                     <AlertCircle className="w-3 h-3" />
                     {error}
@@ -417,7 +430,7 @@ export default function App() {
               )}
               <form
                 onSubmit={handleSubmit}
-                className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-xl focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
+                className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-2xl shadow-black/50 focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
               >
                 <textarea
                   ref={textareaRef}
