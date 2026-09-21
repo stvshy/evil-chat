@@ -625,7 +625,12 @@ export default function App() {
                   <button
                     type="submit"
                     disabled={!input.trim() || isLoading}
-                    className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-red-600 transition-colors shrink-0"
+                    className={cn(
+                      "flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full text-white transition-colors shrink-0",
+                      !input.trim() || isLoading
+                        ? "bg-red-700/6 text-white/30 border border-red-900/20 cursor-not-allowed"
+                        : "bg-red-600 hover:bg-red-700"
+                    )}
                   >
                     <Send className="w-4 h-4 sm:w-5 sm:h-5 -ml-[1.7px] mt-0.5" />
                   </button>
