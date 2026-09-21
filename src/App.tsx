@@ -120,6 +120,27 @@ export default function App() {
     };
   }, []);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 639px)');
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
+  }, []);
+
+  const inputAreaRef = useRef<HTMLDivElement>(null);
+  const [inputAreaHeight, setInputAreaHeight] = useState(0);
+  useEffect(() => {
+    const el = inputAreaRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      setInputAreaHeight(entries[0].contentRect.height);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -359,7 +380,10 @@ export default function App() {
         <div className="flex flex-col flex-1 min-w-0 relative">
           
           <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
-            <div className="max-w-5xl mx-auto px-3 sm:px-4 pt-[22px] pb-28 sm:pt-8 sm:pb-40 space-y-4 sm:space-y-8 sm:pt-[32px]">
+            <div
+              className="max-w-5xl mx-auto px-3 sm:px-4 pt-[22px] pb-28 sm:pt-8 sm:pb-40 space-y-4 sm:space-y-8 sm:pt-[32px]"
+              style={isMobile ? { paddingBottom: inputAreaHeight + 16 } : undefined}
+            >
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -429,7 +453,7 @@ export default function App() {
 
           <div className="absolute -bottom-2 left-0 right-[8px] z-10 pointer-events-none">
             
-            <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none hidden sm:block">
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
               <div className="absolute inset-0 backdrop-blur-[2px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[8px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)' }} />
@@ -437,7 +461,7 @@ export default function App() {
               <div className="absolute inset-0 backdrop-blur-[32px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)' }} />
             </div>
         
-            <div className="max-w-5xl mx-auto relative pt-8 pb-3 sm:pt-16 sm:pb-8 px-3 sm:px-4 w-full pointer-events-auto">
+            <div ref={inputAreaRef} className="max-w-5xl mx-auto relative pt-2 pb-2 sm:pt-16 sm:pb-8 px-3 sm:px-4 w-full pointer-events-auto">
               {error && (
                 <div className="absolute top-2 left-0 right-0 flex justify-center px-2">
                   <div className="bg-red-950/80 text-red-400 text-[11px] sm:text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
@@ -491,8 +515,8 @@ export default function App() {
                   </button>
                 </div>
               </form>
-              <div className="text-center mt-[9px]">
-                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] sm:mb-[-21px] mb-[0px]">
+              <div className="hidden sm:block text-center mt-[9px]">
+                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] mb-[-21px]">
                   {t.footer}
                 </p>
               </div>
