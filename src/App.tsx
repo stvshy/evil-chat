@@ -115,6 +115,12 @@ export default function App() {
 
     let lastWidth = window.innerWidth;
 
+    const resetScroll = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
     const updateViewportHeight = () => {
       const vh = vv.height;
       const vw = window.innerWidth;
@@ -129,17 +135,15 @@ export default function App() {
 
       const heightDiff = initialHeightRef.current - vh;
       const isFocused = document.activeElement === textareaRef.current;
-      const keyboardOpen = isMobile && (heightDiff > 120 || (isFocused && heightDiff > 50));
+      const keyboardOpen = isMobile && (heightDiff > 140 || (isFocused && heightDiff > 80));
 
       setIsKeyboardOpen(keyboardOpen);
-      // Gdy klawiatura jest zamknięta, ufamy natywnemu 100dvh zamiast zapamiętanej wartości (unika przesunięcia stopki)
       if (keyboardOpen) {
-        document.documentElement.style.setProperty('--app-vh', `${vh}px`);
+        document.documentElement.style.setProperty('--keyboard-vh', `${vh}px`);
       } else {
-        document.documentElement.style.removeProperty('--app-vh');
+        document.documentElement.style.removeProperty('--keyboard-vh');
+        resetScroll();
       }
-      window.scrollTo(0, 0);
-      document.body.scrollTop = 0;
     };
 
     updateViewportHeight();
@@ -192,28 +196,33 @@ export default function App() {
     if (window.innerWidth < 640) {
       setTimeout(() => {
         window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
         scrollToBottom();
       }, 100);
       setTimeout(() => {
         window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
-      }, 250);
+      }, 300);
     }
   };
 
   const handleTextareaBlur = () => {
     if (window.innerWidth < 640) {
-      setTimeout(() => {
+      const resetScroll = () => {
         window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
-        const vv = window.visualViewport;
-        if (vv && initialHeightRef.current - vv.height <= 80) {
-          setIsKeyboardOpen(false);
-          // Ufamy natywnemu 100dvh po zamknięciu klawiatury, nie zapamiętanej wartości
-          document.documentElement.style.removeProperty('--app-vh');
-        }
-      }, 100);
+      };
+      resetScroll();
+      setTimeout(resetScroll, 100);
+      setTimeout(resetScroll, 250);
+      setTimeout(() => {
+        resetScroll();
+        setIsKeyboardOpen(false);
+        document.documentElement.style.removeProperty('--keyboard-vh');
+      }, 350);
     }
   };
 
@@ -359,7 +368,12 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-dvh max-sm:fixed max-sm:inset-0 max-sm:h-[var(--app-vh,100dvh)] overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
+    <div
+      className={cn(
+        "flex flex-col h-dvh overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50",
+        isKeyboardOpen && "max-sm:h-[var(--keyboard-vh)]"
+      )}
+    >
       <style>{`
         @keyframes wave-scale {
           0%, 100% { transform: scaleY(0.3); }
@@ -504,21 +518,27 @@ export default function App() {
             "absolute left-0 z-10 pointer-events-none transition-all duration-150",
             isKeyboardOpen
               ? "bottom-0 right-0"
-              : "-bottom-2 right-0 sm:right-[8px]"
+              : "bottom-0 sm:-bottom-2 right-0 sm:right-[8px]"
           )}>
             
-            <div className="absolute inset-0 pointer-events-none">
+            {/* Tło i blur, gdy klawiatura jest zamknięta */}
+            <div className={cn("absolute inset-0 pointer-events-none", isKeyboardOpen ? "hidden" : "block")}>
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
               <div className="absolute inset-0 backdrop-blur-[2px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[8px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[16px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 60%, black 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 60%, black 85%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[32px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)' }} />
             </div>
+
+            {/* Tło i blur pod textinputem, gdy klawiatura jest wysunięta na telefonie */}
+            <div className={cn("absolute inset-0 pointer-events-none", isKeyboardOpen ? "block sm:hidden" : "hidden")}>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/95 via-[#050505]/80 to-[#050505]/40 backdrop-blur-xl" />
+            </div>
         
             <div className={cn(
               "max-w-5xl mx-auto relative px-3 sm:px-4 w-full pointer-events-auto",
               isKeyboardOpen
-                ? "pt-1 pb-1.5 sm:pt-16 sm:pb-8"
+                ? "py-2 sm:pt-16 sm:pb-8"
                 : "pt-8 pb-3 sm:pt-16 sm:pb-8"
             )}>
               {error && (
