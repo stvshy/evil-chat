@@ -101,6 +101,25 @@ export default function App() {
     };
   }, []);
 
+  // Śledzi rzeczywistą wysokość widocznego obszaru (mniejszą, gdy telefon pokazuje klawiaturę)
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const updateViewportHeight = () => {
+      document.documentElement.style.setProperty('--app-vh', `${vv.height}px`);
+      window.scrollTo(0, 0);
+    };
+
+    updateViewportHeight();
+    vv.addEventListener('resize', updateViewportHeight);
+    vv.addEventListener('scroll', updateViewportHeight);
+    return () => {
+      vv.removeEventListener('resize', updateViewportHeight);
+      vv.removeEventListener('scroll', updateViewportHeight);
+    };
+  }, []);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -270,7 +289,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
+    <div className="flex flex-col h-dvh max-sm:h-[var(--app-vh,100dvh)] overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
       <style>{`
         @keyframes wave-scale {
           0%, 100% { transform: scaleY(0.3); }
