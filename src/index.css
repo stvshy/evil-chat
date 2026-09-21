@@ -72,6 +72,22 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+@media (max-width: 639px) {
+  html, body {
+    position: fixed;
+    inset: 0;
+  }
+}
+
 body {
   background-color: #050505;
   color: #e5e5e5;

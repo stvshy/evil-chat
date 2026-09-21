@@ -101,44 +101,52 @@ export default function App() {
     };
   }, []);
 
-  // Śledzi rzeczywistą wysokość widocznego obszaru (mniejszą, gdy telefon pokazuje klawiaturę)
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const initialHeightRef = useRef<number>(0);
+
+  // Śledzi rzeczywistą wysokość widocznego obszaru i wykrywa klawiaturę na telefonie
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
 
+    if (!initialHeightRef.current) {
+      initialHeightRef.current = vv.height;
+    }
+
+    let lastWidth = window.innerWidth;
+
     const updateViewportHeight = () => {
-      document.documentElement.style.setProperty('--app-vh', `${vv.height}px`);
+      const vh = vv.height;
+      const vw = window.innerWidth;
+      const isMobile = vw < 640;
+
+      if (Math.abs(vw - lastWidth) > 50) {
+        lastWidth = vw;
+        initialHeightRef.current = vh;
+      } else if (vh > initialHeightRef.current) {
+        initialHeightRef.current = vh;
+      }
+
+      const heightDiff = initialHeightRef.current - vh;
+      const isFocused = document.activeElement === textareaRef.current;
+      const keyboardOpen = isMobile && (heightDiff > 120 || (isFocused && heightDiff > 50));
+
+      setIsKeyboardOpen(keyboardOpen);
+      document.documentElement.style.setProperty('--app-vh', `${vh}px`);
       window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
     };
 
     updateViewportHeight();
     vv.addEventListener('resize', updateViewportHeight);
     vv.addEventListener('scroll', updateViewportHeight);
+    window.addEventListener('resize', updateViewportHeight);
+
     return () => {
       vv.removeEventListener('resize', updateViewportHeight);
       vv.removeEventListener('scroll', updateViewportHeight);
+      window.removeEventListener('resize', updateViewportHeight);
     };
-  }, []);
-
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia('(max-width: 639px)');
-    const update = () => setIsMobile(mql.matches);
-    update();
-    mql.addEventListener('change', update);
-    return () => mql.removeEventListener('change', update);
-  }, []);
-
-  const inputAreaRef = useRef<HTMLDivElement>(null);
-  const [inputAreaHeight, setInputAreaHeight] = useState(0);
-  useEffect(() => {
-    const el = inputAreaRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      setInputAreaHeight(entries[0].contentRect.height);
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
   }, []);
 
   const [messages, setMessages] = useState<Message[]>([
@@ -167,6 +175,40 @@ export default function App() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (isKeyboardOpen) {
+      setTimeout(scrollToBottom, 50);
+      setTimeout(scrollToBottom, 200);
+    }
+  }, [isKeyboardOpen]);
+
+  const handleTextareaFocus = () => {
+    if (window.innerWidth < 640) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        scrollToBottom();
+      }, 100);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+      }, 250);
+    }
+  };
+
+  const handleTextareaBlur = () => {
+    if (window.innerWidth < 640) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        const vv = window.visualViewport;
+        if (vv && initialHeightRef.current - vv.height <= 80) {
+          setIsKeyboardOpen(false);
+        }
+      }, 100);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -310,7 +352,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-dvh max-sm:h-[var(--app-vh,100dvh)] overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
+    <div className="flex flex-col h-dvh max-sm:fixed max-sm:inset-0 max-sm:h-[var(--app-vh,100dvh)] overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
       <style>{`
         @keyframes wave-scale {
           0%, 100% { transform: scaleY(0.3); }
@@ -379,11 +421,11 @@ export default function App() {
 
         <div className="flex flex-col flex-1 min-w-0 relative">
           
-          <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
-            <div
-              className="max-w-5xl mx-auto px-3 sm:px-4 pt-[22px] pb-28 sm:pt-8 sm:pb-40 space-y-4 sm:space-y-8 sm:pt-[32px]"
-              style={isMobile ? { paddingBottom: inputAreaHeight + 16 } : undefined}
-            >
+          <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative overscroll-y-contain">
+            <div className={cn(
+              "max-w-5xl mx-auto px-3 sm:px-4 pt-[22px] space-y-4 sm:space-y-8 sm:pt-[32px]",
+              isKeyboardOpen ? "pb-16 sm:pb-40" : "pb-28 sm:pb-40"
+            )}>
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -451,9 +493,14 @@ export default function App() {
             </div>
           </main>
 
-          <div className="absolute -bottom-2 left-0 right-[8px] z-10 pointer-events-none">
+          <div className={cn(
+            "absolute left-0 z-10 pointer-events-none transition-all duration-150",
+            isKeyboardOpen
+              ? "bottom-0 right-0"
+              : "-bottom-2 right-0 sm:right-[8px]"
+          )}>
             
-            <div className="absolute inset-0 pointer-events-none hidden sm:block">
+            <div className={cn("absolute inset-0 pointer-events-none", isKeyboardOpen && "hidden sm:block")}>
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
               <div className="absolute inset-0 backdrop-blur-[2px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[8px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)' }} />
@@ -461,7 +508,12 @@ export default function App() {
               <div className="absolute inset-0 backdrop-blur-[32px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)' }} />
             </div>
         
-            <div ref={inputAreaRef} className="max-w-5xl mx-auto relative pt-2 pb-2 sm:pt-16 sm:pb-8 px-3 sm:px-4 w-full pointer-events-auto">
+            <div className={cn(
+              "max-w-5xl mx-auto relative px-3 sm:px-4 w-full pointer-events-auto",
+              isKeyboardOpen
+                ? "pt-1 pb-1.5 sm:pt-16 sm:pb-8"
+                : "pt-8 pb-3 sm:pt-16 sm:pb-8"
+            )}>
               {error && (
                 <div className="absolute top-2 left-0 right-0 flex justify-center px-2">
                   <div className="bg-red-950/80 text-red-400 text-[11px] sm:text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
@@ -479,6 +531,8 @@ export default function App() {
                 value={input}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
+                onFocus={handleTextareaFocus}
+                onBlur={handleTextareaBlur}
                 placeholder={t.placeholder}
                 className="font-chat w-full max-h-[140px] sm:max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-3 py-2.5 sm:px-4 sm:py-3 outline-none resize-none overflow-y-auto text-[14px] sm:text-[15.3px]"
                 rows={1}
@@ -515,8 +569,8 @@ export default function App() {
                   </button>
                 </div>
               </form>
-              <div className="hidden sm:block text-center mt-[9px]">
-                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] mb-[-21px]">
+              <div className={cn("text-center mt-[9px]", isKeyboardOpen && "hidden sm:block")}>
+                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] sm:mb-[-21px] mb-[0px]">
                   {t.footer}
                 </p>
               </div>
