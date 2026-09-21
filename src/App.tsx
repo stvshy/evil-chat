@@ -531,41 +531,41 @@ export default function App() {
             </div>
 
             {/* Tło i blur pod textinputem, gdy klawiatura jest wysunięta na telefonie */}
-            <div className={cn("absolute inset-x-0 bottom-0 -top-12 pointer-events-none", isKeyboardOpen ? "block sm:hidden" : "hidden")}>
+            <div className={cn("absolute inset-x-0 bottom-0 -top-3 pointer-events-none", isKeyboardOpen ? "block sm:hidden" : "hidden")}>
               {/* Płynny gradient przyciemnienia */}
               <div
                 className="absolute inset-0"
                 style={{
-                  background: 'linear-gradient(to bottom, transparent 0%, rgba(5,5,5,0.08) 25%, rgba(5,5,5,0.45) 50%, rgba(5,5,5,0.85) 75%, rgba(5,5,5,0.96) 100%)'
+                  background: 'linear-gradient(to bottom, transparent 0%, rgba(5,5,5,0.15) 30%, rgba(5,5,5,0.6) 65%, rgba(5,5,5,0.96) 100%)'
                 }}
               />
-              {/* Progresywne warstwy blur dla ultra-płynnego przejścia */}
+              {/* Progresywne warstwy blur dla ultra-płynnego przejścia tuż nad textinputem */}
               <div
                 className="absolute inset-0 backdrop-blur-[2px]"
                 style={{
-                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 35%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 35%, black 100%)'
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 40%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 40%, black 100%)'
                 }}
               />
               <div
                 className="absolute inset-0 backdrop-blur-[6px]"
                 style={{
-                  maskImage: 'linear-gradient(to bottom, transparent 20%, black 55%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 20%, black 55%, black 100%)'
+                  maskImage: 'linear-gradient(to bottom, transparent 25%, black 60%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 25%, black 60%, black 100%)'
                 }}
               />
               <div
                 className="absolute inset-0 backdrop-blur-[12px]"
                 style={{
-                  maskImage: 'linear-gradient(to bottom, transparent 40%, black 75%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 40%, black 75%, black 100%)'
+                  maskImage: 'linear-gradient(to bottom, transparent 45%, black 75%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 45%, black 75%, black 100%)'
                 }}
               />
               <div
-                className="absolute inset-0 backdrop-blur-[24px]"
+                className="absolute inset-0 backdrop-blur-[20px]"
                 style={{
-                  maskImage: 'linear-gradient(to bottom, transparent 60%, black 90%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 60%, black 90%, black 100%)'
+                  maskImage: 'linear-gradient(to bottom, transparent 65%, black 90%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 65%, black 90%, black 100%)'
                 }}
               />
             </div>
