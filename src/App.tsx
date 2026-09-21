@@ -270,7 +270,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
+    <div className="flex flex-col h-dvh overflow-hidden bg-[#050505] text-gray-200 font-sans selection:bg-red-900/50">
       <style>{`
         @keyframes wave-scale {
           0%, 100% { transform: scaleY(0.3); }
@@ -294,14 +294,15 @@ export default function App() {
         }
       `}</style>
 
-      <header className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-[44px] h-[44px] rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
-            <Flame className="w-6 h-6 text-white" />
+      <header className="sticky top-0 z-20 flex items-center justify-between px-3 py-2.5 sm:px-6 sm:py-4 bg-[#0a0a0a]/80 bg-gradient-to-r from-red-950/20 from-0% via-red-950/[0.1] via-50% to-red-950/20 to-100% backdrop-blur-md border-b border-red-900/10 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-red-600 to-red-900 shadow-[0_0_15px_rgba(220,38,38,0.3)] shrink-0">
+            <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-[17.8px] font-bold tracking-tight text-white">{t.title} <span className="text-[18px]">😈</span></h1>            <div className="mt-[2px]">
-              <div className="flex items-center gap-2">
+            <h1 className="text-[15px] sm:text-[17.8px] font-bold tracking-tight text-white">{t.title} <span className="text-[16px] sm:text-[18px]">😈</span></h1>
+            <div className="mt-[2px]">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <span
                   className={cn(
                     'w-2 h-2 rounded-full inline-block',
@@ -309,7 +310,7 @@ export default function App() {
                   )}
                 />
                 <span className={cn(
-                  'font-tech text-[10.8px] font-semibold uppercase tracking-widest', 
+                  'font-tech text-[9.5px] sm:text-[10.8px] font-semibold uppercase tracking-widest', 
                   status.available && !status.checking ? 'text-green-400' : 'text-red-500/80'
                 )}>
                   {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
@@ -321,7 +322,7 @@ export default function App() {
 
         <button
           onClick={toggleLanguage}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition-colors"
+          className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition-colors shrink-0"
           title={lang === 'en' ? "Switch to Polish" : "Switch to English"}
         >
           <ReactCountryFlag
@@ -339,7 +340,7 @@ export default function App() {
         <div className="flex flex-col flex-1 min-w-0 relative">
           
           <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
-            <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 space-y-8">
+            <div className="max-w-5xl mx-auto px-3 sm:px-4 pt-4 pb-28 sm:pt-8 sm:pb-40 space-y-4 sm:space-y-8">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -354,12 +355,12 @@ export default function App() {
                   {message.role !== 'system' && (
                     <div className="flex-shrink-0 mt-1">
                       {message.role === 'assistant' ? (
-                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
-                          <Bot className="w-5 h-5 text-red-400" />
+                        <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
+                          <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800">
-                          <User className="w-5 h-5 text-zinc-400" />
+                        <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-900 border border-zinc-800">
+                          <User className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-400" />
                         </div>
                       )}
                     </div>
@@ -367,7 +368,7 @@ export default function App() {
 
                   <div
                     className={cn(
-                      "font-chat px-5 py-4 rounded-2xl text-[14.7px] leading-relaxed shadow-sm min-w-0",
+                      "font-chat px-3.5 py-3 sm:px-5 sm:py-4 rounded-2xl text-[13.5px] sm:text-[14.7px] leading-relaxed shadow-sm min-w-0",
                       message.role === 'user'
                         ? "bg-zinc-900 text-zinc-100 border border-zinc-800 rounded-tr-sm"
                         : message.role === 'assistant'
@@ -393,13 +394,13 @@ export default function App() {
               {isLoading && (
                 <div className="flex gap-4 max-w-[95%] md:max-w-[78%] mr-auto">
                   <div className="flex-shrink-0 mt-1">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
-                      <Bot className="w-5 h-5 text-red-400" />
+                    <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-red-900 to-black border border-red-800/50 shadow-[0_0_10px_rgba(153,27,27,0.2)]">
+                      <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
                     </div>
                   </div>
-                  <div className="px-5 py-4 rounded-2xl bg-[#111111] border border-red-900/20 rounded-tl-sm flex items-center gap-3">
+                  <div className="px-3.5 py-3 sm:px-5 sm:py-4 rounded-2xl bg-[#111111] border border-red-900/20 rounded-tl-sm flex items-center gap-3">
                     <Loader2 className="w-4 h-4 text-red-500 animate-spin" />
-                    <span className="text-sm font-medium text-red-500/80 animate-pulse">{t.loading}</span>
+                    <span className="text-xs sm:text-sm font-medium text-red-500/80 animate-pulse">{t.loading}</span>
                   </div>
                 </div>
               )}
@@ -417,18 +418,18 @@ export default function App() {
               <div className="absolute inset-0 backdrop-blur-[32px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 85%, black 100%)' }} />
             </div>
         
-            <div className="max-w-5xl mx-auto relative pt-16 pb-8 px-4 w-full pointer-events-auto">
+            <div className="max-w-5xl mx-auto relative pt-8 pb-3 sm:pt-16 sm:pb-8 px-3 sm:px-4 w-full pointer-events-auto">
               {error && (
-                <div className="absolute top-2 left-0 right-0 flex justify-center">
-                  <div className="bg-red-950/80 text-red-400 text-xs px-4 py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
-                    <AlertCircle className="w-3 h-3" />
+                <div className="absolute top-2 left-0 right-0 flex justify-center px-2">
+                  <div className="bg-red-950/80 text-red-400 text-[11px] sm:text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-red-900/50 backdrop-blur-sm flex items-center gap-2">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
                     {error}
                   </div>
                 </div>
               )}
               <form
                 onSubmit={handleSubmit}
-                className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-2 shadow-2xl shadow-black/50 focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
+                className="relative flex items-center gap-2 bg-[#111] border border-zinc-800 rounded-3xl p-1.5 sm:p-2 shadow-2xl shadow-black/50 focus-within:border-red-900/50 focus-within:ring-1 focus-within:ring-red-900/50 transition-all duration-300"
               >
                <textarea
                 ref={textareaRef}
@@ -436,15 +437,15 @@ export default function App() {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder={t.placeholder}
-                className="font-chat w-full max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-4 py-3 outline-none resize-none overflow-y-auto text-[15.3px]"
+                className="font-chat w-full max-h-[140px] sm:max-h-[200px] bg-transparent text-zinc-100 placeholder:text-zinc-600 px-3 py-2.5 sm:px-4 sm:py-3 outline-none resize-none overflow-y-auto text-[14px] sm:text-[15.3px]"
                 rows={1}
                />
-                <div className="flex items-center gap-2 flex-shrink-0 mr-1">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 mr-0.5 sm:mr-1">
                   <button
                     type="button"
                     onClick={toggleListening}
                     className={cn(
-                      "flex items-center justify-center w-10 h-10 rounded-full transition-colors border",
+                      "flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-colors border shrink-0",
                       isListening
                         ? "bg-[#220000] border-red-900/50 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
                         : "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
@@ -458,21 +459,21 @@ export default function App() {
                         <div className="w-[3px] h-full bg-current rounded-full animate-[wave-scale_1s_ease-in-out_infinite]" style={{ animationDelay: '400ms' }} />
                       </div>
                     ) : (
-                      <Mic className="w-5 h-5" />
+                      <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                     )}
                   </button>
 
                   <button
                     type="submit"
                     disabled={!input.trim() || isLoading}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-red-600 transition-colors"
+                    className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-red-600 transition-colors shrink-0"
                   >
-                    <Send className="w-5 h-5 -ml-[1.7px] mt-0.5" />
+                    <Send className="w-4 h-4 sm:w-5 sm:h-5 -ml-[1.7px] mt-0.5" />
                   </button>
                 </div>
               </form>
               <div className="text-center mt-[9px]">
-                <p className="font-tech text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] mb-[-21px]">
+                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] sm:mb-[-15px] mb-[5px]">
                   {t.footer}
                 </p>
               </div>
