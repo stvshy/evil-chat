@@ -78,19 +78,19 @@ async def startup_event():
         print("   ✅ Baza załadowana pomyślnie")
 
         # ========== KROK 2: Inicjalizacja modelu LLM ==========
-        print("\n2️⃣  Inicjalizuję model LLM (OpenRouter Uncensored)...")
+        print("\n2️⃣  Inicjalizuję model LLM (Experiential Labs gpt-6-astra)...")
         if EVIL_MODE == "LOCAL":
             print("   📍 Tryb: OLLAMA (lokalny)")
             llm = Ollama(model="jayeshpandit2480/gemma3-UNCENSORED:1b", num_ctx=2048)
         else:
-            print("   ☁️  Tryb: OpenRouter")
-            OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-            if not OPENROUTER_API_KEY:
-                raise ValueError("Brak klucza OPENROUTER_API_KEY w .env!")
+            print("   ☁️  Tryb: Experiential Labs")
+            EXPLABS_API_KEY = os.getenv("EXPLABS_API_KEY")
+            if not EXPLABS_API_KEY:
+                raise ValueError("EXPLABS_API_KEY is not set. Please create one under Settings -> API keys and export it.")
             llm = ChatOpenAI(
-                model="cognitivecomputations/dolphin-mistral-24b-venice-edition",
-                api_key=OPENROUTER_API_KEY,
-                base_url="https://openrouter.ai/api/v1",
+                model="gpt-6-astra",
+                api_key=EXPLABS_API_KEY,
+                base_url="https://api.experientiallabs.ai/v1",
                 temperature=0.7,
             )
         print("   ✅ Model LLM gotowy")

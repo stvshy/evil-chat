@@ -471,8 +471,8 @@ export default function App() {
                   </button>
                 </div>
               </form>
-              <div className="text-center mt-3">
-                <p className="font-tech text-[9.5px] text-zinc-600 font-semibold uppercase tracking-[0.9px] mb-[-17px]">
+              <div className="text-center mt-[9px]">
+                <p className="font-tech text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] mb-[-21px]">
                   {t.footer}
                 </p>
               </div>
