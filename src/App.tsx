@@ -132,7 +132,12 @@ export default function App() {
       const keyboardOpen = isMobile && (heightDiff > 120 || (isFocused && heightDiff > 50));
 
       setIsKeyboardOpen(keyboardOpen);
-      document.documentElement.style.setProperty('--app-vh', `${vh}px`);
+      // Gdy klawiatura jest zamknięta, ufamy natywnemu 100dvh zamiast zapamiętanej wartości (unika przesunięcia stopki)
+      if (keyboardOpen) {
+        document.documentElement.style.setProperty('--app-vh', `${vh}px`);
+      } else {
+        document.documentElement.style.removeProperty('--app-vh');
+      }
       window.scrollTo(0, 0);
       document.body.scrollTop = 0;
     };
@@ -205,6 +210,8 @@ export default function App() {
         const vv = window.visualViewport;
         if (vv && initialHeightRef.current - vv.height <= 80) {
           setIsKeyboardOpen(false);
+          // Ufamy natywnemu 100dvh po zamknięciu klawiatury, nie zapamiętanej wartości
+          document.documentElement.style.removeProperty('--app-vh');
         }
       }, 100);
     }
@@ -500,7 +507,7 @@ export default function App() {
               : "-bottom-2 right-0 sm:right-[8px]"
           )}>
             
-            <div className={cn("absolute inset-0 pointer-events-none", isKeyboardOpen && "hidden sm:block")}>
+            <div className="absolute inset-0 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
               <div className="absolute inset-0 backdrop-blur-[2px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)' }} />
               <div className="absolute inset-0 backdrop-blur-[8px]" style={{ maskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 30%, black 60%, black 100%)' }} />
