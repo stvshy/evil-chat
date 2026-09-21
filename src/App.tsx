@@ -301,7 +301,7 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-[15px] sm:text-[17.8px] font-bold tracking-tight text-white">{t.title} <span className="text-[16px] sm:text-[18px]">😈</span></h1>
-            <div className="mt-[2px]">
+            <div className="mt-[1px] sm:mt-[2px]">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span
                   className={cn(
@@ -310,7 +310,7 @@ export default function App() {
                   )}
                 />
                 <span className={cn(
-                  'font-tech text-[9.5px] sm:text-[10.8px] font-semibold uppercase tracking-widest', 
+                  'font-tech text-[9.0px] sm:text-[10.8px] font-semibold uppercase tracking-widest', 
                   status.available && !status.checking ? 'text-green-400' : 'text-red-500/80'
                 )}>
                   {status.checking ? t.statusChecking : (status.available ? t.statusAvailable : t.statusUnavailable)}
@@ -340,7 +340,7 @@ export default function App() {
         <div className="flex flex-col flex-1 min-w-0 relative">
           
           <main className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
-            <div className="max-w-5xl mx-auto px-3 sm:px-4 pt-4 pb-28 sm:pt-8 sm:pb-40 space-y-4 sm:space-y-8">
+            <div className="max-w-5xl mx-auto px-3 sm:px-4 pt-[22px] pb-28 sm:pt-8 sm:pb-40 space-y-4 sm:space-y-8 sm:pt-[32px]">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -473,7 +473,7 @@ export default function App() {
                 </div>
               </form>
               <div className="text-center mt-[9px]">
-                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] sm:mb-[-15px] mb-[5px]">
+                <p className="font-tech text-[6.5px] sm:text-[7.5px] text-zinc-600/50 font-semibold uppercase tracking-[1.6px] sm:mb-[-21px] mb-[0px]">
                   {t.footer}
                 </p>
               </div>
